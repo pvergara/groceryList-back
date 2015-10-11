@@ -27,7 +27,10 @@
         "jms/serializer-bundle": "1.0.*"
     },
     "require-dev": {
-        "sensio/generator-bundle": "~2.3"
+        "phpunit/phpunit": "4.8.*",
+        "sensio/generator-bundle": "~2.3",
+        "behat/behat": "3.0.*",
+        "behat/symfony2-extension": "2.1.*"
     },
     "scripts": {
         "post-install-cmd": [

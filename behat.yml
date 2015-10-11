@@ -1,0 +1,16 @@
+default:
+    formatters:
+        progress:
+            paths: false
+
+    extensions:
+        Behat\Symfony2Extension: ~
+
+    suites:
+        integration:
+            type: symfony_bundle
+            bundle: GroceryListAPIBundle
+            contexts:
+                - GroceryList\APIBundle\Features\Context\FeatureContext:
+                    client: @test.client
+                    entityManager: @doctrine.orm.default_entity_manager
