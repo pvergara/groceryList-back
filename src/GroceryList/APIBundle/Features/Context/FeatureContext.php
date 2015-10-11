@@ -6,6 +6,7 @@ use Behat\Symfony2Extension\Context\KernelAwareContext;
 use Doctrine\ORM\EntityManager;
 use FOS\RestBundle\Util\Codes;
 use GroceryList\APIBundle\Tests\Base\ServerIntegrationService;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Bundle\FrameworkBundle\Client;
 
@@ -32,6 +33,11 @@ class FeatureContext extends \PHPUnit_Framework_TestCase implements KernelAwareC
     private $client;
 
     private $statusCodes;
+
+    /**
+     * @var Response|null A Response instance
+     */
+    private $response;
 
 
     public function __construct(Client $client, EntityManager $entityManager)
@@ -77,13 +83,16 @@ class FeatureContext extends \PHPUnit_Framework_TestCase implements KernelAwareC
      */
     public function iNavigateToTheGetGroceryListsEndpoint()
     {
+        $this->client->request("GET", "/api/groceryLists.json");
+        $this->response = $this->client->getResponse();
     }
 
     /**
      * @Then /^The endpoint returns me "([^"]*)" as status code$/
+     * @param $statusCode
      */
-    public function theEndpointReturnsMeAsStatusCode($arg1)
+    public function theEndpointReturnsMeAsStatusCode($statusCode)
     {
-
+        $this->assertEquals($this->statusCodes[strtoupper($statusCode)], $this->response->getStatusCode());
     }
 }
