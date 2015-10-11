@@ -1,0 +1,3 @@
+groceryList_api_groceryList:
+    type: rest
+    resource: "@GroceryListAPIBundle/Controller/GroceryListController.php"

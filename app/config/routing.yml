@@ -1,3 +1,9 @@
-app:
-    resource: "@AppBundle/Controller/"
-    type:     annotation
+grocery_list_api_bundle:
+    resource: "@GroceryListAPIBundle/Resources/config/routing.yml"
+    prefix:   /api
+    type: rest
+    options:
+        expose: true
+
+grocery_list_app_bundle:
+    resource: "@GroceryListAppBundle/Resources/config/routing.yml"
