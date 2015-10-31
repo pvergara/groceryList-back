@@ -3,13 +3,32 @@
 namespace GroceryList\APIBundle\Controller;
 
 use FOS\RestBundle\Controller\Annotations\Get;
+use FOS\RestBundle\Controller\Annotations\Post;
 use FOS\RestBundle\Controller\FOSRestController;
 use FOS\RestBundle\Util\Codes;
+use GroceryList\APIBundle\Common\ApplicationServices\ListAppService;
+use GroceryList\APIBundle\Common\DTOs\FirstItemDto;
 use GroceryList\APIBundle\Common\DTOs\VerySimpleDto;
+use Symfony\Component\HttpFoundation\ParameterBag;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 class GroceryListController extends FOSRestController
 {
+    /**
+     * @var ListAppService
+     */
+    private $listService;
+
+    /**
+     * GroceryListController constructor.
+     */
+    public function __construct()
+    {
+        $this->listService = new ListAppService();
+
+    }
+
     /**
      * @Get("/groceryLists")
      *
@@ -19,7 +38,26 @@ class GroceryListController extends FOSRestController
     {
         $data = new VerySimpleDto();
         $data->setResponse("What's up dude!!!!");
+
         return $this->respondsOk($data);
+
+    }
+
+    /**
+     * @Post("/lists/automatic/firstItem")
+     *
+     * @param Request $request
+     * @return Response
+     */
+    public function postAutomaticFirstItemAction(Request $request)
+    {
+        /** @var ParameterBag $request */
+        /** @noinspection PhpUndefinedFieldInspection */
+        $request = $request->request;
+
+        /** @var FirstItemDto $response */
+        $response = $this->listService->createNewAutomaticListWith($request);
+        return $this->respondsCreated($response);
     }
 
     /**
@@ -29,6 +67,12 @@ class GroceryListController extends FOSRestController
     public function respondsOk($entity)
     {
         $view = $this->view($entity, Codes::HTTP_OK);
+        return $this->handleView($view);
+    }
+
+    private function respondsCreated($entity)
+    {
+        $view = $this->view($entity, Codes::HTTP_CREATED);
         return $this->handleView($view);
     }
 

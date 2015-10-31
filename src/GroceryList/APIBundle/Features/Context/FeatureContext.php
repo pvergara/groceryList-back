@@ -2,6 +2,7 @@
 namespace GroceryList\APIBundle\Features\Context;
 
 
+use Behat\Behat\Tester\Exception\PendingException;
 use Behat\Symfony2Extension\Context\KernelAwareContext;
 use Doctrine\ORM\EntityManager;
 use FOS\RestBundle\Util\Codes;
@@ -12,6 +13,13 @@ use Symfony\Bundle\FrameworkBundle\Client;
 
 class FeatureContext extends \PHPUnit_Framework_TestCase implements KernelAwareContext
 {
+    /**
+     * @var array
+     */
+    private $jsonHeaders = array(
+        'CONTENT_TYPE' => 'application/json',
+    );
+
     /**
      * @var ServerIntegrationService
      */
@@ -38,6 +46,13 @@ class FeatureContext extends \PHPUnit_Framework_TestCase implements KernelAwareC
      * @var Response|null A Response instance
      */
     private $response;
+
+    private $itemsToAdd;
+
+    /**
+     * @var array
+     */
+    private $contentAsAssocArray;
 
 
     public function __construct(Client $client, EntityManager $entityManager)
@@ -95,4 +110,50 @@ class FeatureContext extends \PHPUnit_Framework_TestCase implements KernelAwareC
     {
         $this->assertEquals($this->statusCodes[strtoupper($statusCode)], $this->response->getStatusCode());
     }
+
+    /**
+     * @Given /^"([^"]*)" as MY FIRST item to add to my list$/
+     * @param $item
+     */
+    public function asMYFIRSTItemToAddToMyList($item)
+    {
+        $this->itemsToAdd = array();
+        $this->itemsToAdd[]=$item;
+    }
+
+    /**
+     * @When /^I ask to add that item$/
+     */
+    public function iAskToAddThatItem()
+    {
+        $dataToSend = json_encode([
+            "items" => $this->itemsToAdd
+        ]);
+
+        //Action
+        $this->client->request('POST', '/api/lists/automatic/firstItem.json', array(), array(),
+            $this->jsonHeaders,
+            $dataToSend);
+
+        /** @var Response $response */
+        $this->response = $this->client->getResponse();
+        $this->contentAsAssocArray = json_decode($this->response->getContent(), true);
+    }
+
+    /**
+     * @Given /^It returns me a token to add the next item to that list$/
+     */
+    public function itReturnsMeATokenToAddTheNextItemToThatList()
+    {
+        $this->assertNotNull($this->contentAsAssocArray["token"]);
+    }
+
+    /**
+     * @Given /^It returns me the name of the list$/
+     */
+    public function itReturnsMeTheNameOfTheList()
+    {
+        $this->assertNotNull($this->contentAsAssocArray["list_name"]);
+    }
+
 }
