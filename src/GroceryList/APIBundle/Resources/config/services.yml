@@ -1,4 +1,7 @@
+parameters:
+    grocerylist.app_services.list.class: GroceryList\APIBundle\Common\ApplicationServices\ListAppService
+
 services:
-#    api.example:
-#        class: APIBundle\Example
-#        arguments: [@service_id, "plain_value", %parameter%]
+   grocerylist.app_services.list:
+       class: %grocerylist.app_services.list.class%
+

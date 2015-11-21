@@ -9,6 +9,7 @@ use FOS\RestBundle\Util\Codes;
 use GroceryList\APIBundle\Common\ApplicationServices\ListAppService;
 use GroceryList\APIBundle\Common\DTOs\FirstItemDto;
 use GroceryList\APIBundle\Common\DTOs\VerySimpleDto;
+use JMS\DiExtraBundle\Annotation as DI;
 use Symfony\Component\HttpFoundation\ParameterBag;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -16,18 +17,12 @@ use Symfony\Component\HttpFoundation\Response;
 class GroceryListController extends FOSRestController
 {
     /**
-     * @var ListAppService
+     * @DI\Inject("grocerylist.app_services.list")
+     * @var ListAppService $listService
      */
     private $listService;
 
-    /**
-     * GroceryListController constructor.
-     */
-    public function __construct()
-    {
-        $this->listService = new ListAppService();
 
-    }
 
     /**
      * @Get("/groceryLists")
