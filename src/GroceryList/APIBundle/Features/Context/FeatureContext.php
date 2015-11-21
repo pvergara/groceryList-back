@@ -2,14 +2,13 @@
 namespace GroceryList\APIBundle\Features\Context;
 
 
-use Behat\Behat\Tester\Exception\PendingException;
 use Behat\Symfony2Extension\Context\KernelAwareContext;
 use Doctrine\ORM\EntityManager;
 use FOS\RestBundle\Util\Codes;
 use GroceryList\APIBundle\Tests\Base\ServerIntegrationService;
+use Symfony\Bundle\FrameworkBundle\Client;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\KernelInterface;
-use Symfony\Bundle\FrameworkBundle\Client;
 
 class FeatureContext extends \PHPUnit_Framework_TestCase implements KernelAwareContext
 {
@@ -47,7 +46,7 @@ class FeatureContext extends \PHPUnit_Framework_TestCase implements KernelAwareC
      */
     private $response;
 
-    private $itemsToAdd;
+    private $itemToAdd;
 
     /**
      * @var array
@@ -55,8 +54,13 @@ class FeatureContext extends \PHPUnit_Framework_TestCase implements KernelAwareC
     private $contentAsAssocArray;
 
 
+    /** @noinspection PhpMissingParentConstructorInspection
+     * @param Client $client
+     * @param EntityManager $entityManager
+     */
     public function __construct(Client $client, EntityManager $entityManager)
     {
+
         $this->client = $client;
         $this->entityManager = $entityManager;
         $this->initStatusCodes();
@@ -117,8 +121,7 @@ class FeatureContext extends \PHPUnit_Framework_TestCase implements KernelAwareC
      */
     public function asMYFIRSTItemToAddToMyList($item)
     {
-        $this->itemsToAdd = array();
-        $this->itemsToAdd[]=$item;
+        $this->itemToAdd=$item;
     }
 
     /**
@@ -127,7 +130,7 @@ class FeatureContext extends \PHPUnit_Framework_TestCase implements KernelAwareC
     public function iAskToAddThatItem()
     {
         $dataToSend = json_encode([
-            "items" => $this->itemsToAdd
+            "item" => $this->itemToAdd
         ]);
 
         //Action
